@@ -3,7 +3,6 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
 from api.app.middleware import BackendMiddleware
 from api.app.endpoint import router

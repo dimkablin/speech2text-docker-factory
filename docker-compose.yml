@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    image: dimkablin/s2t-factory-backend
+    environment:
+      - SSL_KEY=/app/ssl/local_key.pem
+      - SSL_CERT=/app/ssl/local_cert.pem
+    volumes:
+      - ./backend/ssl:/app/ssl:ro
+      - ./backend/.env:/app/.env:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+    privileged: true  # нужно для доступа к Docker сокету
+
+  frontend:
+    image: dimkablin/s2t-factory-frontend
+    environment:
+      - SSL_KEY=/app/ssl/local_key.pem
+      - SSL_CERT=/app/ssl/local_cert.pem
+    volumes:
+      - ./frontend/ssl:/app/ssl:ro
+      - ./frontend/.env:/app/.env:ro
+    ports:
+      - "8001:8001"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+networks:
+  app-network:
+    driver: bridge

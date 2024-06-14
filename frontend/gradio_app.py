@@ -55,7 +55,7 @@ input_audio = gr.Audio(
 with gr.Blocks() as iface:
     gr.Markdown(
         """
-        # Speech2text model
+        # Модель распознования речи
         """
     )
 
@@ -70,7 +70,7 @@ with gr.Blocks() as iface:
     )
 
     # Компонент для отображения конфигурации модели
-    model_config = gr.JSON(label="Model config")
+    model_config = gr.JSON(label="Настройки модели")
 
     # Обновление конфигурации модели при изменении выбора модели
     model_selector.change(fn=update_model_config, 
