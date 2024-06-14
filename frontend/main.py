@@ -6,5 +6,6 @@ if __name__=="__main__":
         server_name="127.0.0.1", 
         server_port=8000,
         ssl_certfile="ssl/local_cert.pem",
-        ssl_keyfile="ssl/local_key.pem"
+        ssl_keyfile="ssl/local_key.pem",
+        ssl_verify=False
     )
