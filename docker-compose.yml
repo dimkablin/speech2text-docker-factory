@@ -10,6 +10,9 @@ services:
       - ./backend/ssl:/app/ssl:ro
       - ./backend/.env:/app/.env:ro
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./backend:/app
+      - ./docker-compose.yml:/app/docker-compose.yml
+
     ports:
       - "8000:8000"
     depends_on:
@@ -35,8 +38,15 @@ services:
       - MODEL_NAME=openai/whisper-small
       - USE_CUDA=True
       - PORT=8002
-    ports:
-      - "8002:8002"
+    # ports:
+    #   - "8002:8002"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
   
   speech2text-whisper-medium:
     image: dimkablin/speech2text
@@ -46,3 +56,18 @@ services:
       - PORT=8003
     ports:
       - "8003:8003"
+    
+  speech2text-whisper-tiny:
+    image: dimkablin/speech2text
+    environment:
+      - MODEL_NAME=openai/whisper-tiny
+      - USE_CUDA=False
+      - PORT=8004
+  
+  speech2text-whisper-base:
+    image: dimkablin/speech2text
+    environment:
+      - MODEL_NAME=openai/whisper-base
+      - USE_CUDA=False
+      - PORT=8005
+

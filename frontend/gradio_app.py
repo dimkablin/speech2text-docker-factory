@@ -5,6 +5,10 @@ import soundfile as sf
 from io import BytesIO
 from env import BACKEND_URL, VERIFY
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 def get_models():
     response = requests.get(f"{BACKEND_URL}/models", verify=VERIFY)
@@ -21,16 +25,16 @@ def speech_to_text(audio, model_name):
     sf.write(bytes_io, samples, sr, subtype='PCM_16', format='WAV')
     bytes_io.seek(0)
 
-    files = {"audio_file": ("audio.wav", bytes_io, "audio/wav")}
+    files = {"audio": ("audio.wav", bytes_io, "audio/wav")}
     headers = {'accept': 'application/json'}
     
     response = requests.post(f"{BACKEND_URL}/predict?model_name={model_name}", 
                              files=files,
                              headers=headers,
                              verify=VERIFY)
-    
+
     if response.status_code == 200:
-        return response.json().get("transcription", "Error in transcription")
+        return response.json()["result"]
     else:
         return f"Error: {response.status_code} - {response.text}"
 
@@ -77,7 +81,7 @@ input_audio = gr.Audio(
 with gr.Blocks() as iface:
     gr.Markdown(
         """
-        # Модель распознования речи
+        # Модель распознавания речи
         """
     )
 

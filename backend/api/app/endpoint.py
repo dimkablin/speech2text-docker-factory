@@ -2,6 +2,10 @@ from fastapi import APIRouter, HTTPException, UploadFile, File
 import requests
 from utils.model_manager import get_speech2text_urls
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 router = APIRouter()
 
 
@@ -16,7 +20,7 @@ async def list_models():
 
 
 @router.post("/predict")
-async def predict(model_name: str, audio_file: UploadFile = File(...)):
+async def predict(model_name: str, audio: UploadFile = File(...)):
     """ Use container with name model_name to predict. """
     urls = get_speech2text_urls()
     models = list(urls.keys())
@@ -24,11 +28,11 @@ async def predict(model_name: str, audio_file: UploadFile = File(...)):
     if model_name not in models:
         raise HTTPException(status_code=404, detail="Model not found")
     
-    files = {"audio_file": (audio_file.filename, audio_file.file, audio_file.content_type)}
+    files = {"audio": (audio.filename, audio.file, audio.content_type)}
     response = requests.post(f"https://{model_name}:{urls[model_name]}/predict", 
                              files=files, 
                              verify=False)
-    
+
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
     
