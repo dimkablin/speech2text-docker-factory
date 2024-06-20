@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File
 import requests
-from utils.model_manager import get_running_models
+from utils.model_manager import get_speech2text_urls
 
 router = APIRouter()
 
@@ -8,7 +8,8 @@ router = APIRouter()
 @router.get("/models")
 async def list_models():
     """ Rutern all available containers. """
-    models = get_running_models()
+    urls = get_speech2text_urls()
+    models = list(urls.keys())
     if not models:
         raise HTTPException(status_code=404, detail="No models found")
     return {"models": models}
@@ -17,12 +18,16 @@ async def list_models():
 @router.post("/predict")
 async def predict(model_name: str, audio_file: UploadFile = File(...)):
     """ Use container with name model_name to predict. """
-    models = get_running_models()
+    urls = get_speech2text_urls()
+    models = list(urls.keys())
+
     if model_name not in models:
         raise HTTPException(status_code=404, detail="Model not found")
     
-    files = {"file": (audio_file.filename, audio_file.file, audio_file.content_type)}
-    response = requests.post(f"http://{model_name}:8000/predict", files=files)
+    files = {"audio_file": (audio_file.filename, audio_file.file, audio_file.content_type)}
+    response = requests.post(f"https://{model_name}:{urls[model_name]}/predict", 
+                             files=files, 
+                             verify=False)
     
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)
@@ -33,11 +38,14 @@ async def predict(model_name: str, audio_file: UploadFile = File(...)):
 @router.get("/get-config")
 async def get_config(model_name: str):
     """ Return model config. """
-    models = get_running_models()
+    urls = get_speech2text_urls()
+    models = list(urls.keys())
+
     if model_name not in models:
         raise HTTPException(status_code=404, detail="Model not found")
     
-    response = requests.get(f"http://{model_name}:8000/get-config")
+    response = requests.get(f"https://{model_name}:{urls[model_name]}/get-config", 
+                            verify=False)
     
     if response.status_code != 200:
         raise HTTPException(status_code=response.status_code, detail=response.text)

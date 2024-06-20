@@ -12,9 +12,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "8000:8000"
-    networks:
-      - app-network
-    privileged: true  # нужно для доступа к Docker сокету
+    depends_on:
+      - speech2text-whisper-medium
+      - speech2text-whisper-small
 
   frontend:
     image: dimkablin/s2t-factory-frontend
@@ -26,11 +26,23 @@ services:
       - ./frontend/.env:/app/.env:ro
     ports:
       - "8001:8001"
-    networks:
-      - app-network
     depends_on:
       - backend
-
-networks:
-  app-network:
-    driver: bridge
+    
+  speech2text-whisper-small:
+    image: dimkablin/speech2text
+    environment:
+      - MODEL_NAME=openai/whisper-small
+      - USE_CUDA=True
+      - PORT=8002
+    ports:
+      - "8002:8002"
+  
+  speech2text-whisper-medium:
+    image: dimkablin/speech2text
+    environment:
+      - MODEL_NAME=openai/whisper-medium
+      - USE_CUDA=True
+      - PORT=8003
+    ports:
+      - "8003:8003"

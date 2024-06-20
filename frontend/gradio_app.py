@@ -14,7 +14,7 @@ def get_models():
         return ['Нет доступных моделей.']
 
 
-async def speech_to_text(audio, model_name):
+def speech_to_text(audio, model_name):
     sr, samples = audio
     # Convert from numpy to bytes in PCM_16 WAV format
     bytes_io = BytesIO()
@@ -22,9 +22,11 @@ async def speech_to_text(audio, model_name):
     bytes_io.seek(0)
 
     files = {"audio_file": ("audio.wav", bytes_io, "audio/wav")}
+    headers = {'accept': 'application/json'}
     
     response = requests.post(f"{BACKEND_URL}/predict?model_name={model_name}", 
                              files=files,
+                             headers=headers,
                              verify=VERIFY)
     
     if response.status_code == 200:
@@ -37,6 +39,26 @@ def update_model_config(model_name):
     response = requests.get(f"{BACKEND_URL}/get-config?model_name={model_name}",
                             verify=VERIFY)
     return response.json() if response.status_code == 200 else {}
+
+
+def refresh_models_and_config():
+    models = get_models()
+    if models:
+        config = update_model_config(models[0])
+    else:
+        config = {}
+    return models, models[0] if models else "", config
+
+
+def input2output(model_name, audio):
+    # speech2text output
+    s2t = speech_to_text(audio, model_name)
+
+    # model config output
+    model_config = update_model_config(model_name)
+
+    return model_config, s2t
+
 
 input_audio = gr.Audio(
     sources=["upload", "microphone"],
@@ -59,18 +81,19 @@ with gr.Blocks() as iface:
         """
     )
 
-    # Получаем список доступных моделей
-    available_models = get_models()
+    available_models, selected_model, model_config_value = refresh_models_and_config()
 
     # Выпадающее меню для выбора модели
     model_selector = gr.Dropdown(
         choices=available_models,
         label="Выбрать модель",
-        value=available_models[0]
+        value=selected_model
     )
 
     # Компонент для отображения конфигурации модели
-    model_config = gr.JSON(label="Настройки модели")
+    model_config = gr.JSON(
+        label="Настройки модели",
+        value=model_config_value)
 
     # Обновление конфигурации модели при изменении выбора модели
     model_selector.change(fn=update_model_config, 
@@ -79,12 +102,13 @@ with gr.Blocks() as iface:
     
     # Интерфейс для обработки аудио и отображения результата
     gr.Interface(
-        fn=lambda audio, model_name: speech_to_text(audio, model_name),
+        fn=input2output,
         inputs=[model_selector, input_audio],
-        outputs=[model_config, "textbox"],
+        outputs=[model_config, 
+                 gr.Textbox(label="Распознанный текст.")],
         allow_flagging="never"
     )
 
-    
-
-    
+    iface.load(fn=refresh_models_and_config,
+               inputs=None,
+               outputs=[model_selector, model_selector, model_config])

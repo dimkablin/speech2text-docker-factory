@@ -7,5 +7,6 @@ if __name__=="__main__":
         server_port=8001,
         ssl_certfile="ssl/local_cert.pem",
         ssl_keyfile="ssl/local_key.pem",
-        ssl_verify=False
+        ssl_verify=False,
+        show_api=False
     )
