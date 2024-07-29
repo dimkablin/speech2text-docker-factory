@@ -58,6 +58,14 @@ This project provides speech-to-text functionality using various models deployed
 
 4. Open your browser and go to `http://localhost:8001` to use the Gradio interface.
 
+## Running the Project in Docker images
+
+Or you simple can download only `docker-compose.yml` file and run 
+```bash
+docker compose up
+```
+it will download the docker images from docker hub.
+
 ## Endpoints
 
 ### Backend Endpoints
