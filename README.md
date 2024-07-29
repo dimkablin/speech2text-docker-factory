@@ -1,53 +1,84 @@
 # Speech2Text Project
 
-## Описание
+## Description
 
-Этот проект предоставляет функционал для преобразования речи в текст с использованием различных моделей, развернутых в Docker-контейнерах. Проект состоит из Backend (FastAPI) и Frontend (Gradio).
+This project provides speech-to-text functionality using various models deployed in Docker containers. The project consists of a Backend (FastAPI) and a Frontend (Gradio).
 
-## Структура проекта
+![Project Structure](docs/image.png)
+
+## Project Structure
 
 ```
 ├── backend
 │   ├── api
 │   │   ├── app
-│   │   │   ├── endpoint.py         # Основные эндпоинты FastAPI
-│   │   │   └── middleware.py       # Middleware для обработки запросов и ответов
-│   │   └── main.py                 # Основной файл для запуска FastAPI приложения
-│   ├── dockerfile                  # Dockerfile для сборки образа backend-сервиса
-│   ├── env.py                      # Конфигурационные параметры и переменные окружения для backend
-│   ├── main.py                     # Точка входа для запуска backend приложения
+│   │   │   ├── endpoint.py         # Main FastAPI endpoints
+│   │   │   └── middleware.py       # Middleware for processing requests and responses
+│   │   └── main.py                 # Main file to launch the FastAPI application
+│   ├── dockerfile                  # Dockerfile for building the backend service image
+│   ├── env.py                      # Configuration parameters and environment variables for the backend
+│   ├── main.py                     # Entry point for launching the backend application
 │   ├── ssl
-│   │   ├── local_cert.pem          # Локальный SSL-сертификат для защищённых соединений
-│   │   └── local_key.pem           # Локальный SSL-ключ для защищённых соединений
+│   │   ├── local_cert.pem          # Local SSL certificate for secure connections
+│   │   └── local_key.pem           # Local SSL key for secure connections
 │   └── utils
-│       └── model_manager.py        # Утилиты для управления моделями и их загрузкой
+│       └── model_manager.py        # Utilities for managing and loading models
 │      
 ├── frontend
-│   ├── env.py                      # Конфигурационные параметры и переменные окружения для frontend
-│   ├── gradio_app.py               # Gradio приложение для интерфейса пользовательских взаимодействий
-│   ├── main.py                     # Точка входа для запуска frontend приложения
+│   ├── env.py                      # Configuration parameters and environment variables for the frontend
+│   ├── gradio_app.py               # Gradio application for the user interaction interface
+│   ├── main.py                     # Entry point for launching the frontend application
 │   └── ssl
-│       ├── local_cert.pem          # Локальный SSL-сертификат для защищённых соединений
-│       └── local_key.pem           # Локальный SSL-ключ для защищённых соединений
+│       ├── local_cert.pem          # Local SSL certificate for secure connections
+│       └── local_key.pem           # Local SSL key for secure connections
 │   
-├── LICENSE                         # Лицензионное соглашение проекта
-├── docker-compose.yml              # Docker Compose файл для оркестрации контейнеров backend и frontend
-├── README.md                       # Документация и инструкции по проекту
-└── requirements.txt                # Зависимости Python для установки через pip
-
+├── LICENSE                         # Project license agreement
+├── docker-compose.yml              # Docker Compose file for orchestrating backend and frontend containers
+├── README.md                       # Project documentation and instructions
+└── requirements.txt                # Python dependencies for installation via pip
 ```
 
-## Запуск проекта
+![Service Interaction Scheme](docs/scheme.png)
 
-1. Склонируйте репозиторий:
+## Running the Project
+
+1. Clone the repository:
     ```bash
     git clone <your-repo-url>
     cd speech2text_project
     ```
 
-2. Запустите Docker Compose:
+2. Set up environment variables:
+    - Create a `.env` file in both the `backend` and `frontend` directories with the necessary configuration parameters. Use the `env.py` files as a reference for the required variables.
+
+3. Build and run the Docker containers using Docker Compose:
     ```bash
     docker-compose up --build
     ```
 
-3. Откройте браузер и перейдите на `http://localhost:7860`, чтобы использовать интерфейс Gradio.
+4. Open your browser and go to `http://localhost:8001` to use the Gradio interface.
+
+## Endpoints
+
+### Backend Endpoints
+
+- **predict/**: Endpoint for making predictions using the models.
+- **get-config/**: Endpoint for fetching configuration details.
+- **get-models/**: Endpoint for retrieving available models.
+
+### Frontend Endpoint
+
+- **http://localhost:8001**: Gradio interface for user interactions.
+
+## Additional Information
+
+- **SSL Configuration**: Ensure that your SSL certificates (`local_cert.pem` and `local_key.pem`) are correctly placed in the `ssl` directories of both the backend and frontend.
+- **Model Management**: The backend uses `model_manager.py` to handle model loading and management. Ensure models are correctly configured and available.
+
+## License
+
+This project is licensed under the terms of the [LICENSE](LICENSE) file.
+
+---
+
+This README file now includes more detailed instructions for setting up environment variables, explains the available endpoints, and includes additional information about SSL configuration and model management.
