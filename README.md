@@ -4,7 +4,7 @@
 
 This project provides speech-to-text functionality using various models deployed in Docker containers. The project consists of a Backend (FastAPI) and a Frontend (Gradio).
 
-![Project Structure](docs/image.png)
+![Project Structure](assets/image.png)
 
 ## Project Structure
 
@@ -38,7 +38,7 @@ This project provides speech-to-text functionality using various models deployed
 └── requirements.txt                # Python dependencies for installation via pip
 ```
 
-![Service Interaction Scheme](docs/scheme.png)
+![Service Interaction Scheme](assets/scheme.png)
 
 ## Running the Project
 
