@@ -44,7 +44,7 @@ This project provides speech-to-text functionality using various models deployed
 
 1. Clone the repository:
     ```bash
-    git clone <your-repo-url>
+    git clone https://github.com/dimkablin/speech2text-docker-factory.git
     cd speech2text_project
     ```
 
@@ -78,7 +78,3 @@ This project provides speech-to-text functionality using various models deployed
 ## License
 
 This project is licensed under the terms of the [LICENSE](LICENSE) file.
-
----
-
-This README file now includes more detailed instructions for setting up environment variables, explains the available endpoints, and includes additional information about SSL configuration and model management.
